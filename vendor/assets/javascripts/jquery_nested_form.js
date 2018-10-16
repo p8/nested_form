@@ -20,8 +20,9 @@ jQuery(function($) {
       // project[tasks_attributes][1255929127459][assignments_attributes][1255929128105]
       // or for an edit form:
       // project[tasks_attributes][0][assignments_attributes][1]
-      if (context) {
-        var parentNames = context.match(/[a-z_]+_attributes/g) || [];
+      if (false && context) {
+        //var parentNames = context.match(/[a-z_]+_attributes/g) || [];
+        var parentNames = context.match(/[a-z_]+_attributes(?=\]\[(new_)?\d+\])/g) || [];        
         var parentIds   = context.match(/[0-9]+/g) || [];
 
         for(var i = 0; i < parentNames.length; i++) {
@@ -39,7 +40,7 @@ jQuery(function($) {
 
       // Make a unique ID for the new child
       var regexp  = new RegExp('new_' + assoc, 'g');
-      var new_id  = new Date().getTime();
+      var new_id  = this.newId();
       content     = content.replace(regexp, new_id);
 
       var field = this.insertFields(content, assoc, link);
@@ -48,6 +49,9 @@ jQuery(function($) {
         .trigger({ type: 'nested:fieldAdded', field: field })
         .trigger({ type: 'nested:fieldAdded:' + assoc, field: field });
       return false;
+    },
+    newId: function() {
+      return new Date().getTime();
     },
     insertFields: function(content, assoc, link) {
       return $(content).insertBefore(link);
